@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SearchBar from "./Searchbar";
+import SearchBar from "./Searchbar.jsx";
 
 const Layout = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("user"));
