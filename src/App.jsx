@@ -2,9 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./component/Layout";
 import Home from "./pages/Home"
-import Register from "./pages/register";
-import OtpVerification from "./pages/VerifyOtp";
-import Login from "./pages/login";
+import Register from "./pages/Register";
+import OtpVerification from "./pages/VerifyOTP";
+import Login from "./pages/Login";
 import BlogDetails from "./pages/BlogDetalis";
 import CreateBlog from "./pages/CreateBlog";
 import MyBlogs from "./pages/MyBlogs";
