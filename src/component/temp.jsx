@@ -21,7 +21,9 @@ const SearchBar = () => {
 
     try {
       console.log("Searching for:", term);
-      const { data } = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/search?query=${term}`);
+      const { data } = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/search?query=${term}`,{
+          withCredentials: true,
+      });
 
       if (data.length > 0) {
         setResults(data);

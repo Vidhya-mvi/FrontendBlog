@@ -18,7 +18,9 @@ const Home = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("https://blogbackend-jp40.onrender.com/api/blogs");
+        const res = await axios.get("https://blogbackend-jp40.onrender.com/api/blogs",{
+            withCredentials: true,
+        });
         setBlogs(res.data);
       } catch (err) {
         console.error("Failed to fetch blogs:", err);

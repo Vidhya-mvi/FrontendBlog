@@ -30,7 +30,9 @@ const EditBlog = () => {
         setGenre(res.data.genre || "");
 
         if (res.data.image) {
-          setPreview(`https://blogbackend-jp40.onrender.com${res.data.image}`);
+          setPreview(`https://blogbackend-jp40.onrender.com${res.data.image}`,{
+              withCredentials: true,
+          });
         }}catch (err) {
           console.error(" Failed to fetch blog:", err.response || err.message);
           setError(err.response?.data?.message || "Failed to load blog. Please try again.");

@@ -15,7 +15,9 @@ const BlogDetails = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/${id}`);
+        const res = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/${id}`,{
+            withCredentials: true,
+        });
         console.log(" Blog data:", res.data);
         setBlog(res.data);
         setLoading(false);
