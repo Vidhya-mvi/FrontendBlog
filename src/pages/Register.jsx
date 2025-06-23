@@ -36,7 +36,7 @@ const Register = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "https://render.com/docs/web-services#port-binding/api/auth/register",
+        "https://blogbackend-jp40.onrender.com/api/auth/register",
         formData
       );
       setSuccess(" Registration successful! Redirecting to OTP...");

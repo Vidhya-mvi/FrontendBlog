@@ -26,7 +26,7 @@ const MyBlogs = () => {
           return;
         }
 
-        const res = await axios.get(`https://render.com/docs/web-services#port-binding/api/blogs/user/${userId}`, {
+        const res = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/user/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
@@ -53,7 +53,7 @@ const MyBlogs = () => {
     setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog._id !== id));
 
     try {
-      const res = await axios.delete(`https://render.com/docs/web-services#port-binding/api/blogs/${id}`, {
+      const res = await axios.delete(`https://blogbackend-jp40.onrender.com/api/blogs/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
@@ -73,7 +73,7 @@ const MyBlogs = () => {
 
     try {
       const res = await axios.delete(
-        `https://render.com/docs/web-services#port-binding/api/blogs/comment/${blogId}/${commentId}`,
+        `https://blogbackend-jp40.onrender.com/api/blogs/comment/${blogId}/${commentId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,

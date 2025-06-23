@@ -18,7 +18,7 @@ const Home = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("https://render.com/docs/web-services#port-binding/api/blogs");
+        const res = await axios.get("https://blogbackend-jp40.onrender.com/api/blogs");
         setBlogs(res.data);
       } catch (err) {
         console.error("Failed to fetch blogs:", err);
@@ -32,7 +32,7 @@ const Home = () => {
 
     try {
       const res = await axios.put(
-        `https://render.com/docs/web-services#port-binding/api/blogs/like/${id}`, 
+        `https://blogbackend-jp40.onrender.com/api/blogs/like/${id}`, 
         {},
         { withCredentials: true }
       );
@@ -68,7 +68,7 @@ const Home = () => {
 
     try {
       const res = await axios.post(
-        `https://render.com/docs/web-services#port-binding/api/blogs/comment/${id}`,
+        `https://blogbackend-jp40.onrender.com/api/blogs/comment/${id}`,
         { text: comment },
         { withCredentials: true }
       );
@@ -132,7 +132,7 @@ const Home = () => {
           >
             {blog.image && (
               <img
-                src={blog.image.startsWith("http") ? blog.image : `https://render.com/docs/web-services#port-binding${blog.image}`}
+                src={blog.image.startsWith("http") ? blog.image : `https://blogbackend-jp40.onrender.com${blog.image}`}
                 alt={blog.title}
                 style={{
                   width: "100%",

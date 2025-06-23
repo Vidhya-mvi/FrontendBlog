@@ -25,7 +25,7 @@ const Login = () => {
       console.log(" Sending login data:", formData);
 
       const res = await axios.post(
-        "https://render.com/docs/web-services#port-binding/api/auth/login",
+        "https://blogbackend-jp40.onrender.com/api/auth/login",
         formData,
         { withCredentials: true }
       );

@@ -54,7 +54,7 @@ const CreateBlog = () => {
     if (image) formData.append("image", image);
 
     try {
-      const res = await axios.post("https://render.com/docs/web-services#port-binding/api/blogs", formData, {
+      const res = await axios.post("https://blogbackend-jp40.onrender.com/api/blogs", formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });

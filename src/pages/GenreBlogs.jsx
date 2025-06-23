@@ -11,7 +11,7 @@ const GenreBlogs = () => {
   useEffect(() => {
     const fetchBlogsByGenre = async () => {
       try {
-        const { data } = await axios.get(`https://render.com/docs/web-services#port-binding/api/blogs/genre/${genre}`);
+        const { data } = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/genre/${genre}`);
 
         console.log("API response:", data);
         setBlogs(Array.isArray(data) ? data : []);

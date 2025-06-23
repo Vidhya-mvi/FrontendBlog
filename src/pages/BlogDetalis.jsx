@@ -15,7 +15,7 @@ const BlogDetails = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`https://render.com/docs/web-services#port-binding/api/blogs/${id}`);
+        const res = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/${id}`);
         console.log(" Blog data:", res.data);
         setBlog(res.data);
         setLoading(false);
@@ -47,7 +47,7 @@ const BlogDetails = () => {
 
     try {
       const res = await axios.put(
-        `https://render.com/docs/web-services#port-binding/api/blogs/like/${id}`,
+        `https://blogbackend-jp40.onrender.com/api/blogs/like/${id}`,
         {},
         { withCredentials: true }
       );
@@ -75,7 +75,7 @@ const BlogDetails = () => {
 
     try {
       const res = await axios.post(
-        `https://render.com/docs/web-services#port-binding/api/blogs/comment/${id}`,
+        `https://blogbackend-jp40.onrender.com/api/blogs/comment/${id}`,
         { text: commentText },
         { withCredentials: true }
       );
@@ -95,7 +95,7 @@ const BlogDetails = () => {
 
     try {
       await axios.delete(
-        `https://render.com/docs/web-services#port-binding/api/blogs/comment/${id}/${commentId}`,
+        `https://blogbackend-jp40.onrender.com/api/blogs/comment/${id}/${commentId}`,
         { withCredentials: true }
       );
 

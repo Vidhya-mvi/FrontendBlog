@@ -21,7 +21,7 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`https://render.com/docs/web-services#port-binding/api/blogs/${id}`, {
+        const res = await axios.get(`https://blogbackend-jp40.onrender.com/api/blogs/${id}`, {
           withCredentials: true,
         });
 
@@ -30,7 +30,7 @@ const EditBlog = () => {
         setGenre(res.data.genre || "");
 
         if (res.data.image) {
-          setPreview(`https://render.com/docs/web-services#port-binding${res.data.image}`);
+          setPreview(`https://blogbackend-jp40.onrender.com${res.data.image}`);
         }}catch (err) {
           console.error(" Failed to fetch blog:", err.response || err.message);
           setError(err.response?.data?.message || "Failed to load blog. Please try again.");
@@ -79,7 +79,7 @@ const EditBlog = () => {
     if (image) formData.append("image", image);
 
     try {
-      await axios.put(`https://render.com/docs/web-services#port-binding/api/blogs/${id}`, formData, {
+      await axios.put(`https://blogbackend-jp40.onrender.com/api/blogs/${id}`, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
