@@ -24,7 +24,7 @@ const OtpVerification = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+      const res = await axios.post("https://render.com/docs/web-services#port-binding/api/auth/verify-otp", {
         userId,
         otp,
       });

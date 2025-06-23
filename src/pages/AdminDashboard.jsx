@@ -26,10 +26,10 @@ const AdminDashboard = () => {
       setLoading(true);
       try {
         const [userRes, blogRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/users", {
+          axios.get("https://render.com/docs/web-services#port-binding/api/users", {
             withCredentials: true,
           }),
-          axios.get("http://localhost:5000/api/blogs", {
+          axios.get("https://render.com/docs/web-services#port-binding/api/blogs", {
             withCredentials: true,
           }),
         ]);
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
     if (!deleteBlogId) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/blogs/${deleteBlogId}`, {
+      await axios.delete(`https://render.com/docs/web-services#port-binding/api/blogs/${deleteBlogId}`, {
         withCredentials: true,
       });
       setBlogs((prevBlogs) =>
