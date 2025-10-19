@@ -43,6 +43,7 @@ const Register = () => {
         { withCredentials: true }
       );
 
+      // Backend must return data.userId for the next step
       setSuccess(" Registration successful! Redirecting to OTP...");
       setTimeout(() => {
         navigate("/otp", { state: { userId: res.data.userId } });
