@@ -11,6 +11,8 @@ import {
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 
+axios.defaults.withCredentials = true;
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [blogs, setBlogs] = useState([]);
@@ -73,7 +75,7 @@ const AdminDashboard = () => {
     { name: "Blogs", count: blogs.length },
   ];
 
- 
+  
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
@@ -87,7 +89,7 @@ const AdminDashboard = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
-  if (loading) return <p>Loading dashboard...</p>;
+  if (loading) return <p style={styles.loadingText}>Loading dashboard...</p>;
 
   return (
     <div style={styles.container}>
@@ -99,23 +101,28 @@ const AdminDashboard = () => {
         <h2 style={styles.subHeader}>Users & Blogs Overview</h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="count" fill="#8884d8" />
+            <XAxis dataKey="name" stroke="#6B7280" />
+            <YAxis stroke="#6B7280" />
+            <Tooltip 
+                contentStyle={styles.tooltipContent}
+                labelStyle={{ fontWeight: 600, color: '#1F2937' }}
+            />
+            <Legend wrapperStyle={{ paddingTop: "10px" }}/>
+            <Bar dataKey="count" fill="#3B82F6" barSize={30} radius={[4, 4, 0, 0]}/>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
     
       <div style={styles.section}>
-        <h2 style={styles.subHeader}>Users</h2>
+        <h2 style={styles.subHeader}>Users ({users.length})</h2>
         {users.length > 0 ? (
           <ul style={styles.list}>
             {users.map((user) => (
               <li key={user._id} style={styles.listItem}>
-                {user.name || user.username} (<strong>{user.role}</strong>)
+                <span style={{ fontWeight: "600", color: "#1F2937" }}>{user.name || user.username}</span> 
+                <span style={{ color: "#9CA3AF", fontSize: "0.9rem" }}> ({user.email || 'No Email'})</span>
+                <strong style={{ float: "right", color: user.role === 'admin' ? '#EF4444' : '#10B981' }}>{user.role}</strong>
               </li>
             ))}
           </ul>
@@ -125,7 +132,7 @@ const AdminDashboard = () => {
       </div>
 
       <div style={styles.section}>
-        <h2 style={styles.subHeader}>All Blogs</h2>
+        <h2 style={styles.subHeader}>All Blogs ({blogs.length})</h2>
         {currentBlogs.length > 0 ? (
           currentBlogs.map((blog) => (
             <div key={blog._id} style={styles.blogCard}>
@@ -138,7 +145,7 @@ const AdminDashboard = () => {
                   onClick={() => navigate(`/blogs/${blog._id}`)}
                   style={styles.showButton}
                 >
-                  Show Blog
+                  View Blog
                 </button>
                 <button
                   onClick={() => confirmDeleteBlog(blog._id)}
@@ -156,29 +163,20 @@ const AdminDashboard = () => {
       
         {totalPages > 1 && (
           <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "10px",
-              marginTop: "20px",
-              alignItems: "center",
-            }}
+            style={styles.paginationContainer}
           >
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
               style={{
-                ...styles.showButton,
+                ...styles.paginationButton,
                 opacity: currentPage === 1 ? 0.5 : 1,
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
               }}
             >
-              <span>&larr;</span> 
+              <span style={{marginRight: '5px'}}>&larr;</span> Prev 
             </button>
 
-            <span style={{ fontWeight: "bold", color: "#000" }}>
+            <span style={{ fontWeight: "600", color: "#374151", fontSize: "1rem" }}>
               Page {currentPage} of {totalPages}
             </span>
 
@@ -186,14 +184,11 @@ const AdminDashboard = () => {
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
               style={{
-                ...styles.showButton,
+                ...styles.paginationButton,
                 opacity: currentPage === totalPages ? 0.5 : 1,
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
               }}
             >
-              <span>&rarr;</span>
+              Next <span style={{marginLeft: '5px'}}>&rarr;</span>
             </button>
           </div>
         )}
@@ -203,8 +198,8 @@ const AdminDashboard = () => {
       {deleteBlogId && (
         <div style={styles.modalOverlay}>
           <div style={styles.modal}>
-            <h2>Are you sure?</h2>
-            <p>This action cannot be undone.</p>
+            <h2 style={styles.modalTitle}>Confirm Deletion</h2>
+            <p style={styles.modalMessage}>Are you sure you want to delete this blog? This action cannot be undone.</p>
             <div style={styles.modalButtons}>
               <button
                 onClick={() => setDeleteBlogId(null)}
@@ -228,94 +223,167 @@ const AdminDashboard = () => {
 
 const styles = {
   container: {
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
-    backgroundColor: "#f9f9f9",
+    maxWidth: "1000px", 
+    margin: "0 auto", 
+    padding: "1.5rem", 
+    fontFamily: "Inter, sans-serif",
+    backgroundColor: "#f4f7f9", 
     minHeight: "100vh",
   },
   header: {
-    fontSize: "32px",
-    color: "#333",
-    marginBottom: "20px",
+    fontSize: "2.5rem", 
+    color: "#1f2937",
+    marginBottom: "1.5rem",
+    fontWeight: "800",
+    borderBottom: "3px solid #10b981",
+    paddingBottom: "0.5rem",
+    '@media (maxWidth: 600px)': {
+        fontSize: "2rem"
+    }
+  },
+  loadingText: {
+    fontSize: "1.25rem",
+    textAlign: "center",
+    marginTop: "40px",
+    color: "#1F2937",
   },
   error: {
-    color: "red",
-    fontWeight: "bold",
+    color: "#ef4444",
+    fontWeight: "600",
+    backgroundColor: "#fee2e2",
+    padding: "1rem",
+    borderRadius: "8px",
+    marginBottom: "1.5rem",
   },
+  
   chartContainer: {
     backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-    marginBottom: "20px",
+    padding: "1.5rem",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+    marginBottom: "2rem",
   },
+  tooltipContent: { 
+    backgroundColor: 'rgba(255, 255, 255, 0.9)', 
+    border: '1px solid #E5E7EB', 
+    borderRadius: '6px',
+    padding: '8px'
+  },
+  
   section: {
-    marginBottom: "30px",
+    marginBottom: "2rem",
   },
   subHeader: {
-    fontSize: "24px",
-    color: "#444",
-    borderBottom: "2px solid #ddd",
-    paddingBottom: "5px",
-    marginBottom: "10px",
+    fontSize: "1.5rem",
+    color: "#374151",
+    borderBottom: "1px solid #e5e7eb",
+    paddingBottom: "0.5rem",
+    marginBottom: "1rem",
+    fontWeight: "700",
   },
+  
   list: {
     listStyle: "none",
     padding: "0",
     color: "black",
   },
   listItem: {
-    padding: "8px",
-    borderBottom: "1px solid #ddd",
+    padding: "0.75rem 0",
+    borderBottom: "1px solid #f3f4f6",
+    fontSize: "1rem",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap", 
   },
+  
   blogCard: {
-    padding: "10px",
-    border: "1px solid #ddd",
-    borderRadius: "5px",
-    marginBottom: "10px",
+    padding: "1rem",
+    border: "1px solid #e5e7eb",
+    borderRadius: "8px",
+    marginBottom: "1rem",
     backgroundColor: "#fff",
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
   },
   blogTitle: {
-    fontSize: "20px",
-    color: "#555",
+    fontSize: "1.25rem",
+    color: "#1f2937",
+    marginBottom: "0.25rem",
+    fontWeight: "600",
   },
   blogContent: {
-    color: "#666",
+    color: "#6b7280",
+    fontSize: "0.9rem",
+    marginBottom: "1rem",
   },
   buttonGroup: {
     display: "flex",
-    gap: "10px",
-    marginTop: "10px",
+    gap: "0.75rem",
+    marginTop: "1rem",
+    flexDirection: "row", 
+    '@media (maxWidth: 400px)': {
+        flexDirection: "column",
+    }
+  },
+  baseButton: {
+    border: "none",
+    padding: "0.625rem 1rem",
+    cursor: "pointer",
+    borderRadius: "6px",
+    fontWeight: "600",
+    flexGrow: 1, 
+    transition: "background-color 0.2s, transform 0.1s",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   },
   showButton: {
-    backgroundColor: "#3498db",
+    ...this.baseButton,
+    backgroundColor: "#3b82f6", 
     color: "#fff",
-    border: "none",
-    padding: "6px 12px",
-    cursor: "pointer",
-    borderRadius: "3px",
-    fontWeight: "bold",
   },
   deleteButton: {
-    backgroundColor: "#e74c3c",
+    ...this.baseButton,
+    backgroundColor: "#ef4444", 
+    color: "#fff",
+  },
+  
+  noData: {
+    color: "#9ca3af",
+    fontStyle: "italic",
+    textAlign: "center",
+    padding: "1.25rem",
+    backgroundColor: "#fff",
+    borderRadius: "8px",
+  },
+
+  paginationContainer: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "1rem",
+    marginTop: "1.5rem",
+    alignItems: "center",
+    padding: "0.5rem 0",
+    flexWrap: 'wrap', 
+  },
+  paginationButton: {
+    backgroundColor: "#10b981", 
     color: "#fff",
     border: "none",
-    padding: "6px 12px",
+    padding: "0.625rem 1rem",
     cursor: "pointer",
-    borderRadius: "3px",
-    fontWeight: "bold",
+    borderRadius: "6px",
+    fontWeight: "600",
+    transition: "background-color 0.2s, opacity 0.2s",
+    display: "flex",
+    alignItems: "center",
   },
-  noData: {
-    color: "#777",
-    fontStyle: "italic",
-  },
+
   modalOverlay: {
     position: "fixed",
     top: 0,
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -323,34 +391,44 @@ const styles = {
   },
   modal: {
     backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+    padding: "2rem",
+    borderRadius: "12px",
+    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
     textAlign: "center",
     color: "black",
+    maxWidth: "400px", 
+    width: "90%", 
+  },
+  modalTitle: {
+      fontSize: "1.5rem", 
+      color: "#EF4444", 
+      marginBottom: "0.5rem",
+  },
+  modalMessage: {
+      color: "#4B5563",
+      marginBottom: "1.5rem",
   },
   modalButtons: {
     display: "flex",
     justifyContent: "space-around",
-    marginTop: "15px",
+    marginTop: "1.25rem",
+    gap: "0.75rem",
+    flexDirection: "row", 
+    '@media (maxWidth: 400px)': {
+        flexDirection: "column",
+    }
   },
   cancelButton: {
-    backgroundColor: "#ccc",
-    color: "#000",
-    border: "none",
-    padding: "8px 15px",
-    cursor: "pointer",
-    borderRadius: "5px",
-    fontWeight: "bold",
+    ...this.baseButton,
+    backgroundColor: "#9CA3AF",
+    color: "#fff",
+    flexGrow: 1,
   },
   confirmDeleteButton: {
-    backgroundColor: "#e74c3c",
+    ...this.baseButton,
+    backgroundColor: "#EF4444",
     color: "#fff",
-    border: "none",
-    padding: "8px 15px",
-    cursor: "pointer",
-    borderRadius: "5px",
-    fontWeight: "bold",
+    flexGrow: 1,
   },
 };
 

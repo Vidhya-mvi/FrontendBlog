@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+
+axios.defaults.withCredentials = true;
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
@@ -13,8 +15,9 @@ const OtpVerification = () => {
   const userId = location.state?.userId;
 
   if (!userId) {
-    navigate("/register");
-    return null;
+    console.warn("userId missing in state. Redirecting to /register.");
+    setTimeout(() => navigate("/register"), 0);
+    return null; 
   }
 
   const handleSubmit = async (e) => {
@@ -47,18 +50,18 @@ const OtpVerification = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        fontFamily: "Arial, sans-serif",
-        overflow: "hidden",
+        fontFamily: "Inter, Arial, sans-serif",
+        overflow: "auto",
       }}
     >
       <div
         style={{
           backgroundColor: "#fff",
-          padding: "40px",
+          padding: "30px",
           borderRadius: "10px",
           boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
-          width: "400px",
-          maxWidth: "100%",
+          width: "90%",
+          maxWidth: "400px",
           textAlign: "center",
         }}
       >
@@ -71,8 +74,9 @@ const OtpVerification = () => {
               color: "#721c24",
               padding: "10px",
               borderRadius: "5px",
-              marginBottom: "10px",
+              marginBottom: "15px", 
               border: "1px solid #f5c6cb",
+              fontSize: "14px"
             }}
           >
             {error}
@@ -86,31 +90,37 @@ const OtpVerification = () => {
               color: "#155724",
               padding: "10px",
               borderRadius: "5px",
-              marginBottom: "10px",
+              marginBottom: "15px",
               border: "1px solid #c3e6cb",
+              fontSize: "14px"
             }}
           >
             {success}
           </div>
         )}
 
+        <p style={{ marginBottom: "15px", color: "#666", fontSize: "14px" }}>
+            An OTP has been sent to your registered email.
+        </p>
+
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="Enter OTP"
+            placeholder="Enter 6-digit OTP"
             value={otp}
             maxLength="6"
             onChange={(e) => setOtp(e.target.value)}
             required
             style={{
               width: "100%",
-              padding: "12px",
+              padding: "14px",
               marginBottom: "20px",
-              borderRadius: "5px",
+              borderRadius: "8px",
               border: "1px solid #ddd",
-              fontSize: "16px",
+              fontSize: "18px", 
               textAlign: "center",
               letterSpacing: "4px",
+              fontWeight: "bold"
             }}
           />
           <button
@@ -118,11 +128,11 @@ const OtpVerification = () => {
             disabled={otp.length !== 6 || loading}
             style={{
               width: "100%",
-              padding: "12px",
+              padding: "14px",
               backgroundColor: otp.length === 6 && !loading ? "#6a0572" : "#aaa",
               color: "#fff",
               border: "none",
-              borderRadius: "5px",
+              borderRadius: "8px",
               cursor: otp.length === 6 && !loading ? "pointer" : "not-allowed",
               fontWeight: "bold",
               fontSize: "16px",
@@ -138,12 +148,18 @@ const OtpVerification = () => {
               !loading &&
               (e.target.style.backgroundColor = "#6a0572")
             }
-            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
+            onMouseDown={(e) => (e.target.style.transform = "scale(0.98)")}
             onMouseUp={(e) => (e.target.style.transform = "scale(1)")}
           >
             {loading ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
+        
+        <p style={{ marginTop: "20px", color: "#555", fontSize: "14px" }}>
+          <Link to="/register" style={{ color: "#6a0572", textDecoration: "none", fontWeight: "bold" }}>
+            Resend OTP / Go Back to Register
+          </Link>
+        </p>
       </div>
     </div>
   );

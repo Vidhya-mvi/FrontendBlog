@@ -31,16 +31,13 @@ const Login = () => {
         formData
       );
 
-      console.log("✅ Login successful:", res.data);
+      console.log(" Login successful. Session cookie is now set.");
 
       const { user } = res.data;
 
-      console.log("Cookie has been set by the backend.");
+      
 
-      localStorage.setItem("user", JSON.stringify(user));
-      console.log("User saved:", user);
-
-      if (user.role === "admin") {
+      if (user && user.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/");
@@ -66,18 +63,18 @@ const Login = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        fontFamily: "Arial, sans-serif",
-        overflow: "hidden",
+        fontFamily: "Inter, Arial, sans-serif",
+        overflow: "auto", 
       }}
     >
       <div
         style={{
           backgroundColor: "#fff",
-          padding: "40px",
+          padding: "30px", 
           borderRadius: "10px",
           boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
-          width: "400px",
-          maxWidth: "100%",
+          width: "90%", 
+          maxWidth: "400px", 
           textAlign: "center",
         }}
       >
@@ -94,9 +91,9 @@ const Login = () => {
             required
             style={{
               width: "100%",
-              padding: "12px",
+              padding: "14px", 
               marginBottom: "10px",
-              borderRadius: "5px",
+              borderRadius: "8px",
               border: "1px solid #ddd",
               fontSize: "16px",
             }}
@@ -109,9 +106,9 @@ const Login = () => {
             required
             style={{
               width: "100%",
-              padding: "12px",
+              padding: "14px", 
               marginBottom: "20px",
-              borderRadius: "5px",
+              borderRadius: "8px",
               border: "1px solid #ddd",
               fontSize: "16px",
             }}
@@ -122,11 +119,11 @@ const Login = () => {
             disabled={loading}
             style={{
               width: "100%",
-              padding: "12px",
+              padding: "14px",
               backgroundColor: loading ? "#aaa" : "#6a0572",
               color: "#fff",
               border: "none",
-              borderRadius: "5px",
+              borderRadius: "8px",
               cursor: loading ? "not-allowed" : "pointer",
               fontWeight: "bold",
               fontSize: "16px",
@@ -138,22 +135,22 @@ const Login = () => {
             onMouseOut={(e) =>
               !loading && (e.target.style.backgroundColor = "#6a0572")
             }
-            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
+            onMouseDown={(e) => (e.target.style.transform = "scale(0.98)")}
             onMouseUp={(e) => (e.target.style.transform = "scale(1)")}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p style={{ marginTop: "10px", color: "#555" }}>
+        <p style={{ marginTop: "20px", color: "#555" }}>
           <Link to="/" style={{ color: "#6a0572", textDecoration: "none" }}>
             Home
           </Link>
         </p>
 
-        <p style={{ color: "#555" }}>
+        <p style={{ color: "#555", fontSize: "14px" }}>
           Don’t have an account?{" "}
-          <Link to="/register" style={{ color: "#6a0572", textDecoration: "none" }}>
+          <Link to="/register" style={{ color: "#6a0572", textDecoration: "none", fontWeight: "bold" }}>
             Register
           </Link>
         </p>

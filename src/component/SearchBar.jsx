@@ -1,7 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import debounce from "lodash.debounce";
+import debounce from "lodash.debounce"; 
+
+axios.defaults.withCredentials = true;
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,7 +27,6 @@ const SearchBar = () => {
         { withCredentials: true }
       );
 
-
       if (data.length > 0) {
         setResults(data);
         setNoResults(false);
@@ -40,8 +41,7 @@ const SearchBar = () => {
     }
 
     setLoading(false);
-  }, [setResults, setNoResults, setLoading]);
-
+  }, []); 
 
   const debouncedSearch = useMemo(() => debounce(fetchResults, 500), [fetchResults]);
 
@@ -59,7 +59,13 @@ const SearchBar = () => {
   };
 
   return (
-    <div style={{ position: "relative", width: "250px" }}>
+    <div 
+      style={{ 
+        position: "relative", 
+        width: "100%", 
+        maxWidth: "400px" 
+      }}
+    >
       <input
         type="text"
         placeholder="Search blogs..."
@@ -70,39 +76,45 @@ const SearchBar = () => {
           borderRadius: "8px",
           border: "1px solid #ccc",
           fontSize: "1rem",
-          width: "100%",
+          width: "100%", 
           outline: "none",
+          fontFamily: "Inter, Arial, sans-serif",
+          boxSizing: "border-box", 
         }}
       />
-      {(results.length > 0 || noResults) && (
+      {(searchTerm.trim() && (results.length > 0 || noResults || loading)) && (
         <ul
           style={{
             position: "absolute",
             top: "100%",
             left: 0,
+            marginTop: "5px",
             backgroundColor: "#fff",
             color: "black",
             listStyle: "none",
-            padding: "10px",
+            padding: "0",
+            margin: "0",
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             zIndex: 20,
-            width: "100%",
+            width: "100%", 
             borderRadius: "5px",
-            maxHeight: "200px",
+            maxHeight: "250px", 
             overflowY: "auto",
+            fontFamily: "Inter, Arial, sans-serif",
           }}
         >
-          {loading && <li style={{ padding: "5px", color: "#666" }}>Loading...</li>}
+          {loading && <li style={{ padding: "10px", color: "#666" }}>Loading...</li>}
 
           {results.map((blog) => (
             <li
               key={blog._id}
               onClick={() => handleResultClick(blog._id)}
               style={{
-                padding: "8px",
+                padding: "10px",
                 cursor: "pointer",
                 borderBottom: "1px solid #eee",
                 transition: "background 0.2s",
+                fontSize: "0.9rem",
               }}
               onMouseEnter={(e) => (e.target.style.backgroundColor = "#f5f5f5")}
               onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
@@ -111,7 +123,7 @@ const SearchBar = () => {
             </li>
           ))}
 
-          {noResults && <li style={{ padding: "8px", color: "#999" }}> Sorry, no blogs found.</li>}
+          {noResults && <li style={{ padding: "10px", color: "#999" }}>Sorry, no blogs found.</li>}
         </ul>
       )}
     </div>
