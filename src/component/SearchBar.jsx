@@ -1,7 +1,7 @@
-import { useState, useCallback,useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import debounce from "lodash.debounce"; 
+import debounce from "lodash.debounce";
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,35 +11,39 @@ const SearchBar = () => {
   const navigate = useNavigate();
 
   const fetchResults = useCallback(async (term) => {
-  if (!term.trim()) {
-    setResults([]);
-    setNoResults(false);
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs/search?query=${term}`);
-
-    if (data.length > 0) {
-      setResults(data);
+    if (!term.trim()) {
+      setResults([]);
       setNoResults(false);
-    } else {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/blogs/search?query=${term}`,
+        { withCredentials: true }
+      );
+
+
+      if (data.length > 0) {
+        setResults(data);
+        setNoResults(false);
+      } else {
+        setResults([]);
+        setNoResults(true);
+      }
+    } catch (err) {
+      console.error("Error searching blogs:", err);
       setResults([]);
       setNoResults(true);
     }
-  } catch (err) {
-    console.error("Error searching blogs:", err);
-    setResults([]);
-    setNoResults(true);
-  }
 
-  setLoading(false);
-}, [setResults, setNoResults, setLoading]);
+    setLoading(false);
+  }, [setResults, setNoResults, setLoading]);
 
 
-const debouncedSearch = useMemo(() => debounce(fetchResults, 500), [fetchResults]);
+  const debouncedSearch = useMemo(() => debounce(fetchResults, 500), [fetchResults]);
 
   const handleSearch = (e) => {
     const term = e.target.value;
@@ -77,7 +81,7 @@ const debouncedSearch = useMemo(() => debounce(fetchResults, 500), [fetchResults
             top: "100%",
             left: 0,
             backgroundColor: "#fff",
-            color:"black",
+            color: "black",
             listStyle: "none",
             padding: "10px",
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",

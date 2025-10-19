@@ -111,13 +111,13 @@ const MyBlogs = () => {
       {blogs.length === 0 ? (
         <p style={{ color: "black" }}>No blogs found.</p>
       ) : (
-<div
-  style={{
-    display: "grid",
-    gridTemplateColumns: blogs.length === 1 ? "1fr" : "repeat(2, 1fr)",
-    gap: "1rem",
-  }}
->
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: blogs.length === 1 ? "1fr" : "repeat(2, 1fr)",
+            gap: "1rem",
+          }}
+        >
           {blogs.map((blog) => (
             <div
               key={blog._id}
@@ -138,8 +138,7 @@ const MyBlogs = () => {
             >
               {blog.image && (
                 <img
-                  src={blog.image.startsWith("http") ? blog.image : `${import.meta.env.VITE_API_URL}/${blog.image}`}
-                  alt={blog.title}
+                  src={blog.image.startsWith("http") ? blog.image : `${import.meta.env.VITE_API_URL}/${blog.image}`} alt={blog.title}
                   style={{
                     width: "100%",
                     height: "1500px",

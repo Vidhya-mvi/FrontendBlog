@@ -15,7 +15,11 @@ const BlogDetails = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs/${id}`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/blogs/${id}`,
+          { withCredentials: true }
+        );
+
         console.log(" Blog data:", res.data);
         setBlog(res.data);
         setLoading(false);

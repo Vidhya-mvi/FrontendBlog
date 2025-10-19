@@ -11,7 +11,11 @@ const GenreBlogs = () => {
   useEffect(() => {
     const fetchBlogsByGenre = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs/genre/${genre}`);
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/blogs/genre/${genre}`,
+          { withCredentials: true }
+        );
+
 
         console.log("API response:", data);
         setBlogs(Array.isArray(data) ? data : []);

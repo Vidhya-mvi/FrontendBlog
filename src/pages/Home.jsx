@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 
 
 const Home = () => {
@@ -18,7 +18,9 @@ const Home = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs`, {
+          withCredentials: true,
+        });
         setBlogs(res.data);
       } catch (err) {
         console.error("Failed to fetch blogs:", err);
@@ -32,12 +34,12 @@ const Home = () => {
 
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/blogs/like/${id}`, 
+        `${import.meta.env.VITE_API_URL}/api/blogs/like/${id}`,
         {},
         { withCredentials: true }
       );
 
-      console.log("Like API Response:", res.data); 
+      console.log("Like API Response:", res.data);
 
       if (res.data && res.data.likes) {
         setBlogs((prev) =>
@@ -45,7 +47,7 @@ const Home = () => {
             b._id === id ? { ...b, likes: res.data.likes } : b
           )
         );
-        toast(res.data.message); 
+        toast(res.data.message);
       } else {
         console.error("Unexpected response from server:", res.data);
       }
@@ -63,8 +65,8 @@ const Home = () => {
   const handleComment = async (id) => {
     const comment = commentText[id];
 
-    if (!user) ;
-    if (!comment?.trim()) ;
+    if (!user);
+    if (!comment?.trim());
 
     try {
       const res = await axios.post(
@@ -132,7 +134,11 @@ const Home = () => {
           >
             {blog.image && (
               <img
-                src={blog.image.startsWith("http") ? blog.image : `${import.meta.env.VITE_API_URL}/${blog.image}`}
+                src={
+                  blog.image.startsWith("http")
+                    ? blog.image
+                    : `${import.meta.env.VITE_API_URL}/${blog.image}`
+                }
                 alt={blog.title}
                 style={{
                   width: "100%",
@@ -187,7 +193,7 @@ const Home = () => {
                     handleLike(blog._id);
                   }}
                   style={{
-                    backgroundColor: blog.likes.includes(user._id) ? "#e74c3c" : "#4CAF50", 
+                    backgroundColor: blog.likes.includes(user._id) ? "#e74c3c" : "#4CAF50",
                     color: "#fff",
                     border: "none",
                     padding: "5px 10px",
@@ -199,7 +205,7 @@ const Home = () => {
                 >
                   {blog.likes.includes(user._id) ? "Unlike" : "Like"}
                 </button>
-                
+
 
               ) : (
                 <p style={{ color: "gray", fontSize: "0.8rem" }}>Log in to like</p>
@@ -259,16 +265,16 @@ const Home = () => {
                   {showComments[blog._id] &&
                     blog.comments.map((comment, index) => (
                       <p key={index} style={{ fontSize: "0.8rem", color: "#555" }}>
-                      <strong>{comment.postedBy?.username}</strong> - {comment.text} 
-                    </p>
-                    
-                    
+                        <strong>{comment.postedBy?.username}</strong> - {comment.text}
+                      </p>
+
+
                     ))}
                 </>
               ) : (
                 <p style={{ fontSize: "0.8rem", color: "#777" }}>No comments here</p>
               )}
-              
+
 
             </div>
           </div>
