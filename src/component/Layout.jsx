@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SearchBar from "./Searchbar";
+import SearchBar from "./SearchBar";
+;
 
 const Layout = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -123,7 +124,7 @@ const Layout = ({ children }) => {
           </Link>
         </div>
 
-        {/* Search Bar */}
+     
         <div style={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
           <SearchBar />
         </div>

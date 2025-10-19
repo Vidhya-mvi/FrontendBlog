@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback,useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import debounce from "lodash.debounce"; 
@@ -10,37 +10,36 @@ const SearchBar = () => {
   const [noResults, setNoResults] = useState(false);
   const navigate = useNavigate();
 
-  const fetchResults = async (term) => {
-    if (!term.trim()) {
-      setResults([]);
+  const fetchResults = useCallback(async (term) => {
+  if (!term.trim()) {
+    setResults([]);
+    setNoResults(false);
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs/search?query=${term}`);
+
+    if (data.length > 0) {
+      setResults(data);
       setNoResults(false);
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      console.log("Searching for:", term);
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs/search?query=${term}`);
-
-      if (data.length > 0) {
-        setResults(data);
-        setNoResults(false);
-      } else {
-        setResults([]);
-        setNoResults(true);
-      }
-    } catch (err) {
-      console.error("Error searching blogs:", err);
+    } else {
       setResults([]);
       setNoResults(true);
     }
+  } catch (err) {
+    console.error("Error searching blogs:", err);
+    setResults([]);
+    setNoResults(true);
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+}, [setResults, setNoResults, setLoading]);
 
- 
-  const debouncedSearch = useCallback(debounce(fetchResults, 500), []);
+
+const debouncedSearch = useMemo(() => debounce(fetchResults, 500), [fetchResults]);
 
   const handleSearch = (e) => {
     const term = e.target.value;
