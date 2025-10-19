@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+// ✅ Always send cookies for authentication
+axios.defaults.withCredentials = true;
+
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -61,10 +64,8 @@ const CreateBlog = () => {
 
       setAlertMessage("Blog created successfully!");
       setAlertType("success");
-
       setTimeout(dismissAlert, 3000);
 
-     
       setTitle("");
       setContent("");
       setGenre("");
@@ -75,7 +76,6 @@ const CreateBlog = () => {
     } catch (err) {
       setAlertMessage(err.response?.data?.message || "Failed to create blog");
       setAlertType("error");
-
       setTimeout(dismissAlert, 3000);
       console.error("Failed to create blog:", err);
     } finally {
@@ -100,7 +100,6 @@ const CreateBlog = () => {
       {error && <p style={styles.error}>{error}</p>}
 
       <div style={styles.wrapper}>
-     
         <form onSubmit={handleSubmit} style={styles.form}>
           <h1 style={styles.heading}>Create a New Blog</h1>
 
@@ -123,7 +122,6 @@ const CreateBlog = () => {
           </button>
         </form>
 
-      
         <div style={styles.previewContainer}>
           <h2 style={styles.previewTitle}>Live Preview</h2>
           <div style={styles.blogCard}>
@@ -139,6 +137,7 @@ const CreateBlog = () => {
     </div>
   );
 };
+
 
 
 const styles = {

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
+// ✅ Always send cookies for authentication
+axios.defaults.withCredentials = true;
+
 const EditBlog = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,7 +24,7 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/blogs/${id}`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs/${id}`, {
           withCredentials: true,
         });
 
@@ -30,12 +33,12 @@ const EditBlog = () => {
         setGenre(res.data.genre || "");
 
         if (res.data.image) {
-          setPreview(`http://localhost:5000${res.data.image}`);
-        }}catch (err) {
-          console.error(" Failed to fetch blog:", err.response || err.message);
-          setError(err.response?.data?.message || "Failed to load blog. Please try again.");
+          setPreview(`${import.meta.env.VITE_API_URL}${res.data.image}`);
         }
-        
+      } catch (err) {
+        console.error(" Failed to fetch blog:", err.response || err.message);
+        setError(err.response?.data?.message || "Failed to load blog. Please try again.");
+      }
     };
 
     fetchBlog();
@@ -114,7 +117,6 @@ const EditBlog = () => {
       {error && <p style={styles.error}>{error}</p>}
 
       <div style={styles.wrapper}>
-        
         <form onSubmit={handleUpdate} style={styles.form}>
           <h1 style={styles.heading}>Edit Blog</h1>
 
@@ -144,7 +146,6 @@ const EditBlog = () => {
           </button>
         </form>
 
-       
         <div style={styles.previewContainer}>
           <h2 style={styles.previewTitle}>Live Preview</h2>
           <div style={styles.blogCard}>
@@ -160,6 +161,8 @@ const EditBlog = () => {
     </div>
   );
 };
+
+
 
 
 const styles = {

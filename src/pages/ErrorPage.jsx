@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ErrorPage = () => {
   const navigate = useNavigate();
+  const [hover, setHover] = useState(false);
 
   return (
     <div style={styles.container}>
@@ -12,13 +13,20 @@ const ErrorPage = () => {
         Oops! The page you're looking for doesn't exist.
       </p>
 
-      <button onClick={() => navigate("/")} style={styles.button}>
+      <button
+        onClick={() => navigate("/")}
+        style={{
+          ...styles.button,
+          backgroundColor: hover ? "#45a049" : "#4caf50",
+        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
         Go Back Home
       </button>
     </div>
   );
 };
-
 
 const styles = {
   container: {
@@ -56,9 +64,6 @@ const styles = {
     borderRadius: "5px",
     cursor: "pointer",
     transition: "0.3s ease",
-  },
-  buttonHover: {
-    backgroundColor: "#45a049",
   },
 };
 

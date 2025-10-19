@@ -11,6 +11,9 @@ import {
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 
+// ✅ Always send cookies with every axios request
+axios.defaults.withCredentials = true;
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [blogs, setBlogs] = useState([]);
@@ -21,17 +24,21 @@ const AdminDashboard = () => {
   const blogsPerPage = 5;
   const navigate = useNavigate();
 
+  // ✅ Redirect non-admin users
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "admin") {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   useEffect(() => {
     const fetchAdminData = async () => {
       setLoading(true);
       try {
         const [userRes, blogRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
-            withCredentials: true,
-          }),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/blogs`, {
-            withCredentials: true,
-          }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/users`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/blogs`),
         ]);
 
         setUsers(userRes.data || []);
@@ -55,9 +62,9 @@ const AdminDashboard = () => {
     if (!deleteBlogId) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/blogs/${deleteBlogId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/blogs/${deleteBlogId}`
+      );
       setBlogs((prevBlogs) =>
         prevBlogs.filter((blog) => blog._id !== deleteBlogId)
       );
@@ -73,7 +80,6 @@ const AdminDashboard = () => {
     { name: "Blogs", count: blogs.length },
   ];
 
- 
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
@@ -94,7 +100,7 @@ const AdminDashboard = () => {
       <h1 style={styles.header}>Admin Dashboard</h1>
       {error && <p style={styles.error}>{error}</p>}
 
-    
+      {/* Stats Chart */}
       <div style={styles.chartContainer}>
         <h2 style={styles.subHeader}>Users & Blogs Overview</h2>
         <ResponsiveContainer width="100%" height={300}>
@@ -108,7 +114,7 @@ const AdminDashboard = () => {
         </ResponsiveContainer>
       </div>
 
-    
+      {/* Users Section */}
       <div style={styles.section}>
         <h2 style={styles.subHeader}>Users</h2>
         {users.length > 0 ? (
@@ -124,6 +130,7 @@ const AdminDashboard = () => {
         )}
       </div>
 
+      {/* Blogs Section */}
       <div style={styles.section}>
         <h2 style={styles.subHeader}>All Blogs</h2>
         {currentBlogs.length > 0 ? (
@@ -153,29 +160,18 @@ const AdminDashboard = () => {
           <p style={styles.noData}>No blogs found.</p>
         )}
 
-      
+        {/* Pagination */}
         {totalPages > 1 && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "10px",
-              marginTop: "20px",
-              alignItems: "center",
-            }}
-          >
+          <div style={styles.pagination}>
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
               style={{
                 ...styles.showButton,
                 opacity: currentPage === 1 ? 0.5 : 1,
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
               }}
             >
-              <span>&larr;</span> 
+              &larr;
             </button>
 
             <span style={{ fontWeight: "bold", color: "#000" }}>
@@ -188,18 +184,15 @@ const AdminDashboard = () => {
               style={{
                 ...styles.showButton,
                 opacity: currentPage === totalPages ? 0.5 : 1,
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
               }}
             >
-              <span>&rarr;</span>
+              &rarr;
             </button>
           </div>
         )}
       </div>
 
-      
+      {/* Delete Modal */}
       {deleteBlogId && (
         <div style={styles.modalOverlay}>
           <div style={styles.modal}>
@@ -304,6 +297,13 @@ const styles = {
     cursor: "pointer",
     borderRadius: "3px",
     fontWeight: "bold",
+  },
+  pagination: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "10px",
+    marginTop: "20px",
+    alignItems: "center",
   },
   noData: {
     color: "#777",

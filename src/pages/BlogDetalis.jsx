@@ -4,6 +4,9 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// ✅ Always send cookies for authentication
+axios.defaults.withCredentials = true;
+
 const BlogDetails = () => {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
@@ -11,21 +14,17 @@ const BlogDetails = () => {
   const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem("user"));
 
-
+  // ✅ Fetch blog details
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/blogs/${id}`,
-          { withCredentials: true }
-        );
-
-        console.log(" Blog data:", res.data);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/blogs/${id}`);
+        console.log("📄 Blog data:", res.data);
         setBlog(res.data);
-        setLoading(false);
       } catch (err) {
-        console.error(" Failed to fetch blog:", err);
+        console.error("❌ Failed to fetch blog:", err);
         toast.error("Failed to load blog!");
+      } finally {
         setLoading(false);
       }
     };
@@ -44,28 +43,19 @@ const BlogDetails = () => {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-
-
-  const handleLike = async (id) => {
+  // ✅ Handle Like/Unlike
+  const handleLike = async (blogId) => {
     if (!user) return toast.warn("Please log in to like blogs!");
 
     try {
-      const res = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/blogs/like/${id}`,
-        {},
-        { withCredentials: true }
-      );
-
-      console.log("Like API Response:", res.data);
+      const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/blogs/like/${blogId}`);
+      console.log("❤️ Like API Response:", res.data);
 
       if (res.data && res.data.likes) {
-        setBlog((prev) => ({
-          ...prev,
-          likes: res.data.likes,
-        }));
-        toast.success(res.data.message || "Liked the blog!");
+        setBlog((prev) => ({ ...prev, likes: res.data.likes }));
+        toast.success(res.data.message || "Like updated!");
       } else {
-        console.error("Unexpected response from server:", res.data);
+        toast.error("Unexpected response from server!");
       }
     } catch (err) {
       console.error("Failed to like/unlike blog:", err.response?.data || err.message);
@@ -73,16 +63,15 @@ const BlogDetails = () => {
     }
   };
 
+  // ✅ Handle Comment
   const handleAddComment = async () => {
     if (!user) return toast.warn("Please log in to comment!");
     if (!commentText.trim()) return toast.warn("Comment cannot be empty!");
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/blogs/comment/${id}`,
-        { text: commentText },
-        { withCredentials: true }
-      );
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/blogs/comment/${id}`, {
+        text: commentText,
+      });
 
       setBlog(res.data);
       setCommentText("");
@@ -93,15 +82,12 @@ const BlogDetails = () => {
     }
   };
 
-
+  // ✅ Handle Delete Comment
   const handleDeleteComment = async (commentId) => {
     if (!user) return toast.warn("Please log in to delete comments!");
 
     try {
-      await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/blogs/comment/${id}/${commentId}`,
-        { withCredentials: true }
-      );
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/blogs/comment/${id}/${commentId}`);
 
       setBlog((prev) => ({
         ...prev,
@@ -114,12 +100,18 @@ const BlogDetails = () => {
     }
   };
 
-
   if (loading)
     return (
       <div style={{ textAlign: "center", marginTop: "20%" }}>
         <div className="spinner"></div>
         <h3 style={{ color: "#333" }}>Loading blog...</h3>
+      </div>
+    );
+
+  if (!blog)
+    return (
+      <div style={{ textAlign: "center", marginTop: "20%" }}>
+        <h3 style={{ color: "red" }}>Blog not found.</h3>
       </div>
     );
 
@@ -135,7 +127,6 @@ const BlogDetails = () => {
       }}
     >
       <ToastContainer position="top-right" autoClose={2000} />
-
 
       <div
         style={{
@@ -153,7 +144,11 @@ const BlogDetails = () => {
 
         {blog.image && (
           <img
-            src={blog.image}
+            src={
+              blog.image.startsWith("http")
+                ? blog.image
+                : `${import.meta.env.VITE_API_URL}/${blog.image}`
+            }
             alt="Blog"
             style={{
               width: "100%",
@@ -169,8 +164,6 @@ const BlogDetails = () => {
           />
         )}
 
-
-
         <p style={{ fontSize: "0.8rem", color: "#3498db", fontWeight: "bold" }}>
           Genre: {blog.genre || "Unknown"}
         </p>
@@ -179,12 +172,13 @@ const BlogDetails = () => {
           Published on: {formatDate(blog.createdAt)}
         </p>
 
-
         <p style={{ color: "#555", lineHeight: "1.6" }}>{blog.content}</p>
+
         <p style={{ fontWeight: "bold", color: "#777" }}>
-          <strong>By:</strong> {blog.postedBy?.username}
+          <strong>By:</strong> {blog.postedBy?.username || "Anonymous"}
         </p>
 
+        {/* ✅ Like button */}
         <button
           onClick={() => handleLike(blog._id)}
           disabled={!user}
@@ -204,12 +198,15 @@ const BlogDetails = () => {
             opacity: user ? "1" : "0.6",
           }}
         >
-          {user ? (blog.likes.includes(user?._id) ? "Liked" : "Like") : " Like"} ({blog.likes.length})
+          {user
+            ? blog.likes.includes(user?._id)
+              ? "Liked"
+              : "Like"
+            : "Like"}{" "}
+          ({blog.likes?.length || 0})
         </button>
 
-
-
-
+        {/* ✅ Comment box */}
         {user ? (
           <div style={{ marginTop: "15px", display: "flex", gap: "10px" }}>
             <input
@@ -243,19 +240,47 @@ const BlogDetails = () => {
           <p style={{ color: "gray", fontSize: "0.9rem" }}>Log in to comment</p>
         )}
 
-
+        {/* ✅ Comments */}
         <h4 style={{ marginTop: "20px", color: "#444" }}>Comments</h4>
-
-        <ul style={{ listStyle: "none", padding: 0, marginTop: "10px", textAlign: "left" }}>
-          {blog.comments.length > 0 ? (
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            marginTop: "10px",
+            textAlign: "left",
+          }}
+        >
+          {blog.comments?.length > 0 ? (
             blog.comments.map((comment) => (
-              <li key={comment._id} style={{ marginBottom: "8px", padding: "8px", borderBottom: "1px solid #ddd", color: "#444" }}>
-                <strong>{comment.postedBy?.username}:</strong> {comment.text}
-                {user && (comment.postedBy?._id === user._id || user.role === "admin") && (
-                  <button onClick={() => handleDeleteComment(comment._id)} style={{ marginLeft: "10px", backgroundColor: "#e74c3c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "0.8rem" }}>
-                    Delete
-                  </button>
-                )}
+              <li
+                key={comment._id}
+                style={{
+                  marginBottom: "8px",
+                  padding: "8px",
+                  borderBottom: "1px solid #ddd",
+                  color: "#444",
+                }}
+              >
+                <strong>{comment.postedBy?.username || "User"}:</strong>{" "}
+                {comment.text}
+                {user &&
+                  (comment.postedBy?._id === user._id ||
+                    user.role === "admin") && (
+                    <button
+                      onClick={() => handleDeleteComment(comment._id)}
+                      style={{
+                        marginLeft: "10px",
+                        backgroundColor: "#e74c3c",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
               </li>
             ))
           ) : (

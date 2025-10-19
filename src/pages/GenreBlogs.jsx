@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
+// ✅ Always send cookies for authentication
+axios.defaults.withCredentials = true;
+
 const GenreBlogs = () => {
   const { genre } = useParams();
   const [blogs, setBlogs] = useState([]);
@@ -12,10 +15,8 @@ const GenreBlogs = () => {
     const fetchBlogsByGenre = async () => {
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/blogs/genre/${genre}`,
-          { withCredentials: true }
+          `${import.meta.env.VITE_API_URL}/api/blogs/genre/${genre}`
         );
-
 
         console.log("API response:", data);
         setBlogs(Array.isArray(data) ? data : []);
@@ -66,6 +67,8 @@ const GenreBlogs = () => {
     </div>
   );
 };
+
+
 
 
 const styles = {

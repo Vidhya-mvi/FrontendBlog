@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
+axios.defaults.withCredentials = true;
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -22,27 +24,21 @@ const Login = () => {
     setLoading(true);
 
     try {
-      console.log(" Sending login data:", formData);
+      console.log("🔹 Sending login data:", formData);
 
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        formData,
-        { withCredentials: true }
+        formData
       );
 
-      console.log(" Login successful:", res.data);
+      console.log("✅ Login successful:", res.data);
 
-      const { user, token } = res.data;
+      const { user } = res.data;
 
-      if (token) {
-        localStorage.setItem("token", token);
-        console.log(" Token saved:", token);
-      } else {
-        console.warn(" Token missing in response");
-      }
+      console.log("Cookie has been set by the backend.");
 
       localStorage.setItem("user", JSON.stringify(user));
-      console.log("User saved:", localStorage.getItem("user"));
+      console.log("User saved:", user);
 
       if (user.role === "admin") {
         navigate("/admin");
@@ -53,7 +49,8 @@ const Login = () => {
       console.error(" Login failed:", err.response?.data || err.message);
 
       setError(
-        err.response?.data?.message || "Login failed. Please check your credentials."
+        err.response?.data?.message ||
+          "Login failed. Please check your credentials."
       );
     } finally {
       setLoading(false);
