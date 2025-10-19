@@ -221,6 +221,17 @@ const AdminDashboard = () => {
   );
 };
 
+const baseButton = {
+  border: "none",
+  padding: "0.625rem 1rem",
+  cursor: "pointer",
+  borderRadius: "6px",
+  fontWeight: "600",
+  flexGrow: 1, 
+  transition: "background-color 0.2s, transform 0.1s",
+  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+};
+
 const styles = {
   container: {
     maxWidth: "1000px", 
@@ -231,12 +242,13 @@ const styles = {
     minHeight: "100vh",
   },
   header: {
-    fontSize: "2.5rem", 
+    fontSize: "2.5rem",
     color: "#1f2937",
     marginBottom: "1.5rem",
     fontWeight: "800",
-    borderBottom: "3px solid #10b981",
+    borderBottom: "3px solid #10b981", 
     paddingBottom: "0.5rem",
+
     '@media (maxWidth: 600px)': {
         fontSize: "2rem"
     }
@@ -325,23 +337,13 @@ const styles = {
         flexDirection: "column",
     }
   },
-  baseButton: {
-    border: "none",
-    padding: "0.625rem 1rem",
-    cursor: "pointer",
-    borderRadius: "6px",
-    fontWeight: "600",
-    flexGrow: 1, 
-    transition: "background-color 0.2s, transform 0.1s",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
   showButton: {
-    ...this.baseButton,
+    ...baseButton,
     backgroundColor: "#3b82f6", 
     color: "#fff",
   },
   deleteButton: {
-    ...this.baseButton,
+    ...baseButton, 
     backgroundColor: "#ef4444", 
     color: "#fff",
   },
@@ -396,7 +398,7 @@ const styles = {
     boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
     textAlign: "center",
     color: "black",
-    maxWidth: "400px", 
+    maxWidth: "400px",
     width: "90%", 
   },
   modalTitle: {
@@ -419,13 +421,13 @@ const styles = {
     }
   },
   cancelButton: {
-    ...this.baseButton,
+    ...baseButton,
     backgroundColor: "#9CA3AF",
     color: "#fff",
     flexGrow: 1,
   },
   confirmDeleteButton: {
-    ...this.baseButton,
+    ...baseButton, 
     backgroundColor: "#EF4444",
     color: "#fff",
     flexGrow: 1,
